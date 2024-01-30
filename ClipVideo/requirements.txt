@@ -4,4 +4,8 @@ funasr==0.8.7
 moviepy
 numpy
 modelscope==1.10.0
+modelscope
 gradio==3.38.0
+fastapi
+transformers
+ffmpeg-python

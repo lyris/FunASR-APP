@@ -1,20 +1,36 @@
+import os
+
 import gradio as gr
 from modelscope.pipelines import pipeline
 from modelscope.utils.constant import Tasks
 from videoclipper import VideoClipper
 from video import Video
 
+
+LOCAL_MODEL_DIR = 'd:\\temp\\modelscope\\hub\\damo\\'
+
+path_asr = os.path.join(LOCAL_MODEL_DIR, 'speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch')
+path_vad = os.path.join(LOCAL_MODEL_DIR, 'speech_fsmn_vad_zh-cn-16k-common-pytorch')
+path_punc = os.path.join(LOCAL_MODEL_DIR, 'punc_ct-transformer_zh-cn-common-vocab272727-pytorch')
+path_sd = os.path.join(LOCAL_MODEL_DIR, 'speech_campplus_speaker-diarization_common')
+
+path_asr=path_asr if os.path.exists(path_asr)else "damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+path_vad=path_vad if os.path.exists(path_vad)else "damo/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+path_punc=path_punc if os.path.exists(path_punc)else "damo/punc_ct-transformer_zh-cn-common-vocab272727-pytorch"
+path_sd=path_sd if os.path.exists(path_sd)else "damo/speech_campplus_speaker-diarization_common"
+
+
 if __name__ == "__main__":
     inference_pipeline = pipeline(
         task=Tasks.auto_speech_recognition,
-        model='damo/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch',
-        vad_model='damo/speech_fsmn_vad_zh-cn-16k-common-pytorch',
-        punc_model='damo/punc_ct-transformer_zh-cn-common-vocab272727-pytorch',
+        model=path_asr,
+        vad_model=path_vad,
+        punc_model=path_punc,
         ncpu=16,
     )
     sd_pipeline = pipeline(
         task='speaker-diarization',
-        model='damo/speech_campplus_speaker-diarization_common',
+        model=path_sd,
         model_revision='v1.0.0'
     )
     audio_clipper = VideoClipper(inference_pipeline, sd_pipeline)
@@ -111,7 +127,7 @@ if __name__ == "__main__":
         with gr.Tab("🔊✂️音频裁剪 Audio Clipping"):
             with gr.Row():
                 with gr.Column():
-                    audio_input = gr.Audio(label="🔊音频输入 Audio Input")
+                    audio_input = gr.Audio(label="🔊音频输入 Audio Input", type="filepath")
                     gr.Examples(['https://isv-data.oss-cn-hangzhou.aliyuncs.com/ics/MaaS/ClipVideo/%E9%B2%81%E8%82%83%E9%87%87%E8%AE%BF%E7%89%87%E6%AE%B51.wav'], [audio_input])
                     audio_sd_switch = gr.Radio(["no", "yes"], label="👥是否区分说话人 Recognize Speakers", value='no')
                     recog_button1 = gr.Button("👂识别 Recognize")

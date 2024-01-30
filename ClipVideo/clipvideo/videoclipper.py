@@ -25,8 +25,7 @@ class VideoClipper():
     def recog(self, audio_input, sd_switch='no', state=None):
         if state is None:
             state = {}
-        sr, data = audio_input
-        assert sr == 16000, "16kHz sample rate required, {} given.".format(sr)
+        data, sr = librosa.load(audio_input, sr=16000)
         if len(data.shape) == 2:  # multi-channel wav input
             logging.warning("Input wav shape: {}, only first channel reserved.".format(data.shape))
             data = data[:,0]
@@ -42,8 +41,8 @@ class VideoClipper():
         else:
             res_srt = generate_srt(rec_result['sentences'])
         state['recog_res_raw'] = rec_result['text_postprocessed']
-        state['timestamp'] = rec_result['time_stamp']
-        state['sentences'] = rec_result['sentences']
+        state['timestamp'] = rec_result['time_stamp'] if 'time_stamp' in rec_result else ''
+        state['sentences'] = rec_result['sentences'] if 'sentences' in rec_result else ''
         res_text = rec_result['text']
         return res_text, res_srt, state
 
