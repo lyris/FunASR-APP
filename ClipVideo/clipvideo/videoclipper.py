@@ -41,8 +41,8 @@ class VideoClipper():
         else:
             res_srt = generate_srt(rec_result['sentences'])
         state['recog_res_raw'] = rec_result['text_postprocessed']
-        state['timestamp'] = rec_result['time_stamp'] if 'time_stamp' in rec_result else ''
-        state['sentences'] = rec_result['sentences'] if 'sentences' in rec_result else ''
+        state['timestamp'] = rec_result['time_stamp']
+        state['sentences'] = rec_result['sentences']
         res_text = rec_result['text']
         return res_text, res_srt, state
 

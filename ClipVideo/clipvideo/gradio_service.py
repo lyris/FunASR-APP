@@ -7,14 +7,14 @@ from videoclipper import VideoClipper
 from video import Video
 
 
-LOCAL_MODEL_DIR = 'd:\\temp\\modelscope\\hub\\damo\\'
+LOCAL_MODEL_DIR = 'd:\\ai-models\\modelscope\\hub\\damo'
 
-path_asr = os.path.join(LOCAL_MODEL_DIR, 'speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch')
+path_asr = os.path.join(LOCAL_MODEL_DIR, 'speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch')
 path_vad = os.path.join(LOCAL_MODEL_DIR, 'speech_fsmn_vad_zh-cn-16k-common-pytorch')
 path_punc = os.path.join(LOCAL_MODEL_DIR, 'punc_ct-transformer_zh-cn-common-vocab272727-pytorch')
 path_sd = os.path.join(LOCAL_MODEL_DIR, 'speech_campplus_speaker-diarization_common')
 
-path_asr=path_asr if os.path.exists(path_asr)else "damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+path_asr=path_asr if os.path.exists(path_asr)else "damo/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
 path_vad=path_vad if os.path.exists(path_vad)else "damo/speech_fsmn_vad_zh-cn-16k-common-pytorch"
 path_punc=path_punc if os.path.exists(path_punc)else "damo/punc_ct-transformer_zh-cn-common-vocab272727-pytorch"
 path_sd=path_sd if os.path.exists(path_sd)else "damo/speech_campplus_speaker-diarization_common"
@@ -24,12 +24,15 @@ if __name__ == "__main__":
     inference_pipeline = pipeline(
         task=Tasks.auto_speech_recognition,
         model=path_asr,
+        model_revision="v1.2.1",
         vad_model=path_vad,
+        vad_model_revision="v1.1.8",
         punc_model=path_punc,
+        punc_model_revision="v1.1.6",
         ncpu=16,
     )
     sd_pipeline = pipeline(
-        task='speaker-diarization',
+        task=Tasks.speaker_diarization,
         model=path_sd,
         model_revision='v1.0.0'
     )
